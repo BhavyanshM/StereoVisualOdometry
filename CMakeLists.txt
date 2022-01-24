@@ -54,32 +54,38 @@ target_link_libraries(geom-tools
 		Eigen3::Eigen
 		${OpenCV_LIBS})
 
-add_library(visual_odometry STATIC ${VISUAL_ODOMETRY_LIB})
-target_link_libraries(visual_odometry
-		Eigen3::Eigen
-		${OpenCV_LIBS})
+#add_library(visual_odometry STATIC ${VISUAL_ODOMETRY_LIB})
+#target_link_libraries(visual_odometry
+#		Eigen3::Eigen
+#		${OpenCV_LIBS})
 
 set(VIS_ODOM 1)
 if(VIS_ODOM)
-	add_executable(Vis_Odom
+	add_executable(Vis_Odom ${VISUAL_ODOMETRY_LIB}
 			src/ApplicationState.cpp
 			src/DataManager.cpp
 			src/ImageTools.cpp
 			src/VisualOdometryLauncher.cpp
-			src/SFMdata.h
+			src/FactorGraphHandler.cpp
+			src/FactorGraphHandler.h
 #			src/VisualISAM2Example.cpp
 			src/AppUtils.cpp
 			)
 	target_link_libraries(Vis_Odom
 			${OpenCV_LIBS}
 			Eigen3::Eigen
-			geom-tools gtsam
-			visual_odometry)
+			geom-tools gtsam)
 endif()
 
-add_executable(ISAM_Visual src/SFMdata.h src/VisualISAM2Example.cpp)
+add_executable(ISAM_Visual
+		src/SFMdata.h
+		src/VisualISAM2Example.cpp
+		src/FactorGraphHandler.cpp
+		src/FactorGraphHandler.h)
 target_link_libraries(ISAM_Visual
-		Eigen3::Eigen gtsam)
+		${OpenCV_LIBS}
+		Eigen3::Eigen
+		geom-tools gtsam)
 
 
 ## //////////////////////////////////////////////////////////////////////////////////////////////////////////////

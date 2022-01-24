@@ -474,7 +474,8 @@ bool VisualOdometry::Update(ApplicationState& appState)
 //            _bundleAdjustment->Update(points3D, poses);
             /* ------------------------- BUNDLE ADJUSTMENT ------------------------------*/
 
-            _bundleAdjustment->Optimize();
+            FactorGraphHandler* fgh = new FactorGraphHandler();
+            fgh->VisualISAM2Example();
 
 
 //            if (axes)

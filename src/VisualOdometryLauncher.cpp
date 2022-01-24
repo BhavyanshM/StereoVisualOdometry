@@ -1,6 +1,6 @@
 #include "cstdio"
 #include "VisualOdometry.h"
-
+#include "FactorGraphHandler.h"
 
 
 void run(VisualOdometry* vo, DataManager* data, ApplicationState& appState);
@@ -30,13 +30,12 @@ int main(int argc, char** argv)
    VisualOdometry* vo = new VisualOdometry(argc, argv, appState, data);
 
 
-   BundleAdjustment* ba = new BundleAdjustment();
-   ba->Optimize();
 
-//   while(true)
-//   {
-//      run(vo, data, appState);
-//   }
+
+   while(true)
+   {
+      run(vo, data, appState);
+   }
 
 }
 

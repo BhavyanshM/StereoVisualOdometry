@@ -48,11 +48,15 @@
 
 #include <vector>
 
+#include "FactorGraphHandler.h"
+
 using namespace std;
 using namespace gtsam;
 
 /* ************************************************************************* */
-int main(int argc, char* argv[]) {
+
+void VisualISAM2Example()
+{
    // Define the camera calibration parameters
    Cal3_S2::shared_ptr K(new Cal3_S2(50.0, 50.0, 0.0, 50.0, 50.0));
 
@@ -142,7 +146,22 @@ int main(int argc, char* argv[]) {
          initialEstimate.clear();
       }
    }
+}
+
+void MemberVisualISAM2Test()
+{
+   printf("Member Factor Graph Test\n");
+   FactorGraphHandler fgh;
+
+   fgh.VisualISAM2Example();
+}
+
+/* ************************************************************************* */
+int main(int argc, char* argv[]) {
+
+//   VisualISAM2Example(); // Works just fine.
+
+   MemberVisualISAM2Test(); // Crashes with Segmentation Fault.
 
    return 0;
 }
-/* ************************************************************************* */

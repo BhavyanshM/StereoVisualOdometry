@@ -11,6 +11,7 @@
 #include "CameraParams.h"
 #include "BundleAdjustment.h"
 #include "DataManager.h"
+#include "../FactorGraphHandler.h"
 
 struct Keyframe
 {

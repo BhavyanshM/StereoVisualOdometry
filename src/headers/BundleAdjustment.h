@@ -59,13 +59,14 @@ class BundleAdjustment
 //      FactorGraphHandler *fgHandle;
 //
 //      gtsam::noiseModel::Isotropic::shared_ptr cameraMeasurementNoise;
-//      gtsam::ISAM2Params parameters;
-//      gtsam::ISAM2 isam;
-//      gtsam::NonlinearFactorGraph graph;
+      gtsam::ISAM2Params parameters;
+      gtsam::ISAM2* isam;
+      gtsam::NonlinearFactorGraph graph;
+      gtsam::Values initial, result;
 //
 //      gtsam::noiseModel::Diagonal::shared_ptr odometryNoise;
 //      std::unordered_set<std::string> structure;
-//      gtsam::Values initial, result;
+
 //      gtsam::Cal3_S2::shared_ptr K;
 };
 
