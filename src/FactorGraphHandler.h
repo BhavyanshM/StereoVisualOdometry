@@ -24,6 +24,7 @@
 // graph, and initial guesses for any new variables used in the added factors
 #include <gtsam/nonlinear/NonlinearFactorGraph.h>
 #include <gtsam/nonlinear/Values.h>
+#include <gtsam/nonlinear/DoglegOptimizer.h>
 
 // In GTSAM, measurement functions are represented as 'factors'. Several common
 // factors have been provided with the library for solving robotics/SLAM/Bundle
@@ -41,12 +42,18 @@
 // We will also need a camera object to hold calibration information and perform projections.
 #include <gtsam/geometry/SimpleCamera.h>
 
+#include "PointLandmark.h"
+
 class FactorGraphHandler
 {
    public:
       FactorGraphHandler() = default;
 
       void VisualISAM2Example();
+
+      void ComputeNonLinear(std::vector<gtsam::Point2>& measurements, std::vector<gtsam::Pose3>& poses, std::vector<gtsam::Point3>& points);
+
+      void Update(std::vector<PointLandmark>& landmarks, std::vector<Eigen::Matrix4f>& eigenPoses);
 
       std::vector<gtsam::Point3> createPoints();
 

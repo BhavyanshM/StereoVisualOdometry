@@ -207,7 +207,7 @@ void VisualOdometry::TriangulateStereoNormal(std::vector<cv::KeyPoint>& pointsTr
             Eigen::Vector3f point(X, Y, Z);
 
             PointLandmark landmark(point);
-            Eigen::Vector2f measurement(x1, y1);
+            Eigen::Vector2f measurement(pointsTrain[match.trainIdx].pt.x, pointsTrain[match.trainIdx].pt.y);
             landmark.AddMeasurement2D(measurement, match.trainIdx, 0);
 
             points3D.emplace_back(landmark);
@@ -226,8 +226,8 @@ void VisualOdometry::ExtractFinalSet(std::vector<cv::DMatch> leftMatches, std::v
       {
          if (points3D[i]._index[0] == match.trainIdx)
          {
-            Eigen::Vector2f measurement(curLeftKp[match.queryIdx].pt.x - _app.KITTI_CAM_PARAMS._cx,
-                            curLeftKp[match.queryIdx].pt.y - _app.KITTI_CAM_PARAMS._cy);
+            Eigen::Vector2f measurement(curLeftKp[match.queryIdx].pt.x,
+                            curLeftKp[match.queryIdx].pt.y);
 
             Eigen::Vector2f prevMeasurement = points3D[i].GetMeasurements2D()[0];
             Eigen::Vector2f oneMeasurement = points3D[i].GetMeasurements2D()[1];
@@ -468,14 +468,17 @@ bool VisualOdometry::Update(ApplicationState& appState)
             printf("Performing Bundle Adjustment.\n");
 
             /* ------------------------- BUNDLE ADJUSTMENT ------------------------------*/
-//            std::vector<Eigen::Matrix4f> poses;
-//            poses.emplace_back(_keyframes[_keyframes.size() - 2].pose);
-//            poses.emplace_back(_keyframes[_keyframes.size() - 1].pose);
-//            _bundleAdjustment->Update(points3D, poses);
-            /* ------------------------- BUNDLE ADJUSTMENT ------------------------------*/
+            std::vector<Eigen::Matrix4f> poses;
+            poses.emplace_back(_keyframes[_keyframes.size() - 2].pose);
+            poses.emplace_back(_keyframes[_keyframes.size() - 1].pose);
 
             FactorGraphHandler* fgh = new FactorGraphHandler();
-            fgh->VisualISAM2Example();
+            fgh->Update(points3D, poses);
+//            fgh->VisualISAM2Example();
+
+            /* ------------------------- BUNDLE ADJUSTMENT ------------------------------*/
+
+
 
 
 //            if (axes)

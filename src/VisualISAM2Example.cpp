@@ -86,7 +86,7 @@ void VisualISAM2Example()
    Values initialEstimate;
 
    // Loop over the poses, adding the observations to iSAM incrementally
-   for (size_t i = 0; i < poses.size(); ++i) {
+   for (size_t i = 0; i < 2; ++i) {
       // Add factors for each landmark observation
       for (size_t j = 0; j < points.size(); ++j) {
          PinholeCamera<Cal3_S2> camera(poses[i], *K);
@@ -125,9 +125,9 @@ void VisualISAM2Example()
       } else {
 
          graph.print("Graph");
-         initialEstimate.print("Initial");
-         isam.printStats();
-         isam.print("ISAM");
+//         initialEstimate.print("Initial");
+//         isam.printStats();
+//         isam.print("ISAM");
 
          // Update iSAM with the new factors
          isam.update(graph, initialEstimate);
@@ -159,9 +159,9 @@ void MemberVisualISAM2Test()
 /* ************************************************************************* */
 int main(int argc, char* argv[]) {
 
-//   VisualISAM2Example(); // Works just fine.
+   VisualISAM2Example(); // Works just fine.
 
-   MemberVisualISAM2Test(); // Crashes with Segmentation Fault.
+//   MemberVisualISAM2Test(); // Crashes with Segmentation Fault.
 
    return 0;
 }
