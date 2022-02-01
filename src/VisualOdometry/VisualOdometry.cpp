@@ -58,8 +58,8 @@ void VisualOdometry::DrawLandmarks(cv::Mat& img, std::vector<PointLandmark>& lan
 {
    for (int i = 0; i < landmarks.size(); i++)
    {
-      cv::Point2f first(landmarks[i].GetMeasurements2D()[0].x() + _app.KITTI_CAM_PARAMS._cx, landmarks[i].GetMeasurements2D()[0].y() + _app.KITTI_CAM_PARAMS._cy);
-      cv::Point2f second(landmarks[i].GetMeasurements2D()[1].x() + _app.KITTI_CAM_PARAMS._cx, landmarks[i].GetMeasurements2D()[1].y() + _app.KITTI_CAM_PARAMS._cy);
+      cv::Point2f first(landmarks[i].GetMeasurements2D()[0].x(), landmarks[i].GetMeasurements2D()[0].y());
+      cv::Point2f second(landmarks[i].GetMeasurements2D()[1].x(), landmarks[i].GetMeasurements2D()[1].y());
 
       float dist = cv::norm(first - second);
 //      printf("DrawLandmark: First({}, {}), Second:({} {}), Dist({}), Total Measurements: {}", first.x, first.y, second.x, second.y, dist, landmarks[i].GetMeasurements2D().size());
@@ -474,6 +474,7 @@ bool VisualOdometry::Update(ApplicationState& appState)
 
             FactorGraphHandler* fgh = new FactorGraphHandler();
             fgh->Update(points3D, poses);
+
 //            fgh->VisualISAM2Example();
 
             /* ------------------------- BUNDLE ADJUSTMENT ------------------------------*/
