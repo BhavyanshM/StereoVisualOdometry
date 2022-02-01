@@ -468,14 +468,12 @@ bool VisualOdometry::Update(ApplicationState& appState)
             printf("Performing Bundle Adjustment.\n");
 
             /* ------------------------- BUNDLE ADJUSTMENT ------------------------------*/
-            std::vector<Eigen::Matrix4f> poses;
-            poses.emplace_back(_keyframes[_keyframes.size() - 2].pose);
-            poses.emplace_back(_keyframes[_keyframes.size() - 1].pose);
-
-            FactorGraphHandler* fgh = new FactorGraphHandler();
-            fgh->Update(points3D, poses);
-
-//            fgh->VisualISAM2Example();
+//            std::vector<Eigen::Matrix4f> poses;
+//            poses.emplace_back(_keyframes[_keyframes.size() - 2].pose);
+//            poses.emplace_back(_keyframes[_keyframes.size() - 1].pose);
+//
+//            FactorGraphHandler* fgh = new FactorGraphHandler();
+//            fgh->Update(points3D, poses);
 
             /* ------------------------- BUNDLE ADJUSTMENT ------------------------------*/
 

@@ -4,18 +4,18 @@
 #include "boost/filesystem.hpp"
 #include <random>
 
-DataManager::DataManager(ApplicationState& appState, const std::string& directory, const std::string& secondDirectory, const std::string& poseFile)
-    : _directory(directory), _secondDirectory(secondDirectory)
+DataManager::DataManager(ApplicationState& appState)
+    : _directory(appState.DATASET_PATH + "image_0/"), _secondDirectory(appState.DATASET_PATH + "image_1/")
 {
+   printf("DataManager: %s\n", _directory.c_str());
+
    _leftCam.SetParams(718.856, 718.856, 607.193, 185.216);
    _rightCam.SetParams(718.856, 718.856, 607.193, 185.216);
    _baseline =0.54;
 
-    if(boost::filesystem::exists(_directory))
-    {
-         /* KITTI Images */
-        AppUtils::getFileNames(_directory, _fileNames, false);
-        if(secondDirectory != "") AppUtils::getFileNames(secondDirectory, _secondFileNames, false);
+   /* KITTI Images */
+   AppUtils::getFileNames(_directory, _fileNames, true);
+  if(_secondDirectory != "") AppUtils::getFileNames(_secondDirectory, _secondFileNames, true);
 
         /* Ground Truth Poses*/
 //        if(poseFile != "")
@@ -29,7 +29,6 @@ DataManager::DataManager(ApplicationState& appState, const std::string& director
 //            CLAY_LOG_INFO("Poses Shape: {} {}", _poses.shape().at(0), _poses.shape().at(1));
 //        }
 
-    }
 
 }
 
@@ -47,13 +46,15 @@ void DataManager::ShowNext()
 
 cv::Mat DataManager::GetNextImage()
 {
-   std::cout << "Loading Image: " << (_directory + _fileNames[_counter]) << std::endl;
+   printf("Loading Image (%d) : %s\n", _counter, (_directory + _fileNames[_counter]).c_str());
+   if(_counter == _fileNames.size() - 1) _counter = 0;
    return cv::imread(_directory + _fileNames[_counter++], cv::IMREAD_COLOR);
 }
 
 cv::Mat DataManager::GetNextSecondImage()
 {
-   std::cout << "Loading Image: " << (_secondDirectory + _secondFileNames[_counter]) << std::endl;
+   std::cout << "Loading Image: " << (_secondDirectory + _secondFileNames[_secondCounter]) << std::endl;
+   if(_secondCounter == _secondFileNames.size() - 1) _secondCounter = 0;
    return cv::imread(_secondDirectory + _secondFileNames[_secondCounter++], cv::IMREAD_COLOR);
 }
 
