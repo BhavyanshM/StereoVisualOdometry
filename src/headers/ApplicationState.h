@@ -68,6 +68,8 @@ class ApplicationState
 
       std::string DATASET_PATH = "../datasets/KITTI_Sequence_00/";
 
+      bool RUN_TESTS = false;
+
 
 };
 

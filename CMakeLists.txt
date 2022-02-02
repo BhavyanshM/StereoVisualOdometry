@@ -12,7 +12,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 #set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-z,stack-size=${stack_size}")
 
 enable_testing()
-find_package(GTest REQUIRED) # Find the google testing framework on your system
+find_package(Catch2 REQUIRED) # Find the google testing framework on your system
 #find_package(Torch REQUIRED PATHS "${PROJECT_SOURCE_DIR}/Vendor/libtorch")
 
 find_package(gflags REQUIRED)
@@ -27,6 +27,15 @@ include_directories(${GTSAM_INCLUDE_DIR})
 ## is used, also find other catkin packages
 
 set(VISUAL_ODOMETRY_LIB
+		src/ApplicationState.cpp
+		src/DataManager.cpp
+		src/ImageTools.cpp
+
+		src/FactorGraphHandler.cpp
+		src/FactorGraphHandler.h
+		#			src/VisualISAM2Example.cpp
+		src/AppUtils.cpp
+
 		src/VisualOdometry/VisualOdometry.cpp
 		src/headers/VisualOdometry.h
 		src/VisualOdometry/BundleAdjustment.cpp
@@ -63,20 +72,26 @@ target_link_libraries(geom-tools
 set(VIS_ODOM 1)
 if(VIS_ODOM)
 	add_executable(Vis_Odom ${VISUAL_ODOMETRY_LIB}
-			src/ApplicationState.cpp
-			src/DataManager.cpp
-			src/ImageTools.cpp
-			src/VisualOdometryLauncher.cpp
-			src/FactorGraphHandler.cpp
-			src/FactorGraphHandler.h
-#			src/VisualISAM2Example.cpp
-			src/AppUtils.cpp
-			)
+			src/VisualOdometryLauncher.cpp)
 	target_link_libraries(Vis_Odom
 			${OpenCV_LIBS}
 			Eigen3::Eigen
 			geom-tools gtsam)
+
 endif()
+
+set(VIS_ODOM_TEST 1)
+if(VIS_ODOM_TEST)
+	add_executable(Vis_Odom_Test ${VISUAL_ODOMETRY_LIB}
+			test/Catch2Test_VisualOdometry.cpp)
+	target_link_libraries(Vis_Odom_Test
+			${OpenCV_LIBS}
+			Eigen3::Eigen
+			geom-tools gtsam
+			Catch2::Catch2)
+endif()
+
+
 
 add_executable(ISAM_Visual
 		src/SFMdata.h
@@ -87,6 +102,7 @@ target_link_libraries(ISAM_Visual
 		${OpenCV_LIBS}
 		Eigen3::Eigen
 		geom-tools gtsam)
+
 
 
 ## //////////////////////////////////////////////////////////////////////////////////////////////////////////////
