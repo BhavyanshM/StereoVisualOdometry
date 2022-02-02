@@ -195,7 +195,9 @@ void FactorGraphHandler::ComputeNonLinear(std::vector<gtsam::Point2>& measuremen
    gtsam::NonlinearFactorGraph graph;
    gtsam::Values initial;
 
-   // Loop over the different poses, adding the observations to iSAM incrementally
+   graph.emplace_shared<gtsam::BetweenFactor<gtsam::Pose3>>(gtsam::Symbol('x', 0), gtsam::Symbol('x', 1), poses[1], odometryNoise);
+
+   // Loop over the different poses
    for (size_t i = 0; i < poses.size(); ++i)
    {
 
@@ -203,7 +205,7 @@ void FactorGraphHandler::ComputeNonLinear(std::vector<gtsam::Point2>& measuremen
       for (size_t j = 0; j < points.size(); ++j)
       {
          graph.emplace_shared<gtsam::GenericProjectionFactor<gtsam::Pose3, gtsam::Point3, gtsam::Cal3_S2> >(measurements[j * 2 + i], cameraMeasurementNoise, gtsam::Symbol('x', i), gtsam::Symbol('l', j), K);
-         printf("x%d, l%d\n", i, j);
+//         printf("x%d, l%d\n", i, j);
       }
 
       // Add an initial guess for the current pose
@@ -220,20 +222,20 @@ void FactorGraphHandler::ComputeNonLinear(std::vector<gtsam::Point2>& measuremen
                (gtsam::Vector(6) << gtsam::Vector3::Constant(0.1), gtsam::Vector3::Constant(0.3))
                      .finished());
          graph.addPrior(gtsam::Symbol('x', 0), poses[0], kPosePrior);
-         printf("px0, x0\n");
+//         printf("px0, x0\n");
 
          // Add a prior on landmark l0
          static auto kPointPrior = gtsam::noiseModel::Isotropic::Sigma(3, 0.1);
          graph.addPrior(gtsam::Symbol('l', 0), points[0], kPointPrior);
-         printf("pl0, l0\n");
+//         printf("pl0, l0\n");
 
          // Add initial guesses to all observed landmarks
          for (size_t j = 0; j < points.size(); ++j)
             initial.insert(gtsam::Symbol('l', j), points[j]);
       } else
       {
-
-         graph.print("Bundle Adjustment Factor Graph");
+         printf("Optimizing Now.\n");
+//         graph.print("Bundle Adjustment Factor Graph");
 //         initial.print("Bundle Adjustment Initial Values");
 
          //         // Update iSAM with the new factors
@@ -247,7 +249,9 @@ void FactorGraphHandler::ComputeNonLinear(std::vector<gtsam::Point2>& measuremen
 //         isam.update(graph, initial);
          gtsam::Values currentEstimate;
 
-         gtsam::ISAM2Result result = isam.update(graph, initial);
+//         gtsam::ISAM2Result result = isam.update(graph, initial);
+
+         gtsam::Values result = gtsam::LevenbergMarquardtOptimizer(graph, initial).optimize();
 
          std::cout << "****************************************************" << std::endl;
          std::cout << "Frame " << i << ": " << std::endl;

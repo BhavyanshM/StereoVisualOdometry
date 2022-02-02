@@ -32,6 +32,8 @@
 // camera's landmark observations. Also, we will initialize the robot at some
 // location using a Prior factor.
 #include <gtsam/slam/ProjectionFactor.h>
+#include <gtsam/slam/BetweenFactor.h>
+#include <gtsam/nonlinear/LevenbergMarquardtOptimizer.h>
 
 #include <vector>
 
