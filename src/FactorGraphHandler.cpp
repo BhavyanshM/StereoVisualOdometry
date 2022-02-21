@@ -84,18 +84,18 @@ void FactorGraphHandler::VisualISAM2Example()
 //
 //      }
 //
-//      // Add an initial guess for the current pose
+//      // Add an initial guess for the current _pose
 //      // Intentionally initialize the variables off from the ground truth
 //      static gtsam::Pose3 kDeltaPose(gtsam::Rot3::Rodrigues(-0.1, 0.2, 0.25),
 //                                     gtsam::Point3(0.05, -0.10, 0.20));
 //      initialEstimate.insert(gtsam::Symbol('x', i), poses[i] * kDeltaPose);
 //
-//      // If this is the first iteration, add a prior on the first pose to set the
+//      // If this is the first iteration, add a prior on the first _pose to set the
 //      // coordinate frame and a prior on the first landmark to set the scale Also,
 //      // as iSAM solves incrementally, we must wait until each is observed at
 //      // least twice before adding it to iSAM.
 //      if (i == 0) {
-//         // Add a prior on pose x0, 30cm std on x,y,z and 0.1 rad on roll,pitch,yaw
+//         // Add a prior on _pose x0, 30cm std on x,y,z and 0.1 rad on roll,pitch,yaw
 //         static auto kPosePrior = gtsam::noiseModel::Diagonal::Sigmas(
 //               (gtsam::Vector(6) << gtsam::Vector3::Constant(0.1), gtsam::Vector3::Constant(0.3))
 //                     .finished());
@@ -155,23 +155,17 @@ void FactorGraphHandler::Update(std::vector<PointLandmark>& landmarks, std::vect
       poses.emplace_back(gtsam::Pose3(pose.cast<double>()));
    }
 
+   K = boost::make_shared<gtsam::Cal3_S2>(718.856, 718.856, 0, 607.193, 185.216);
    ComputeNonLinear(measurements, poses, points);
 }
 
 void FactorGraphHandler::ComputeNonLinear(std::vector<gtsam::Point2>& measurements, std::vector<gtsam::Pose3>& poses, std::vector<gtsam::Point3>& points)
 {
-
-   gtsam::Vector6 odomVariance;
-   gtsam::noiseModel::Diagonal::shared_ptr odometryNoise;
-   gtsam::noiseModel::Isotropic::shared_ptr cameraMeasurementNoise;
-
    odomVariance << 1e-1, 1e-1, 1e-1, 1e-1, 1e-1, 1e-1;
    odometryNoise = gtsam::noiseModel::Diagonal::Variances(odomVariance);
 
    // Define the camera calibration parameters
    /* 718.856, fy = 718.856, cx = 607.193, cy = 185.216; */
-   gtsam::Cal3_S2::shared_ptr K(new gtsam::Cal3_S2(718.856, 718.856, 0, 607.193, 185.216));
-
    // Define the camera observation noise model
    cameraMeasurementNoise = gtsam::noiseModel::Isotropic::Sigma(2, 0.3); // one pixel in u and v
 
@@ -186,14 +180,13 @@ void FactorGraphHandler::ComputeNonLinear(std::vector<gtsam::Point2>& measuremen
    // as the relinearization threshold and type of linear solver. For this
    // example, we we set the relinearization threshold small so the iSAM2 result
    // will approach the batch result.
-   gtsam::ISAM2Params parameters;
-   parameters.relinearizeThreshold = 0.01;
-   parameters.relinearizeSkip = 1;
-   gtsam::ISAM2 isam(parameters);
 
-   // Create a Factor Graph and Values to hold the new data
-   gtsam::NonlinearFactorGraph graph;
-   gtsam::Values initial;
+//   gtsam::ISAM2Params parameters;
+//   gtsam::ISAM2 isam(parameters);
+//   parameters.relinearizeThreshold = 0.01;
+//   parameters.relinearizeSkip = 1;
+
+
 
    graph.emplace_shared<gtsam::BetweenFactor<gtsam::Pose3>>(gtsam::Symbol('x', 0), gtsam::Symbol('x', 1), poses[1], odometryNoise);
 
@@ -205,36 +198,32 @@ void FactorGraphHandler::ComputeNonLinear(std::vector<gtsam::Point2>& measuremen
       for (size_t j = 0; j < points.size(); ++j)
       {
          graph.emplace_shared<gtsam::GenericProjectionFactor<gtsam::Pose3, gtsam::Point3, gtsam::Cal3_S2> >(measurements[j * 2 + i], cameraMeasurementNoise, gtsam::Symbol('x', i), gtsam::Symbol('l', j), K);
-//         printf("x%d, l%d\n", i, j);
       }
 
-      // Add an initial guess for the current pose
+      // Add an initial guess for the current _pose
       initial.insert(gtsam::Symbol('x', i), poses[i]);
 
-      // If this is the first iteration, add a prior on the first pose to set the coordinate frame
+      // If this is the first iteration, add a prior on the first _pose to set the coordinate frame
       // and a prior on the first landmark to set the scale
       // Also, as iSAM solves incrementally, we must wait until each is observed at least twice before
       // adding it to iSAM.
       if (i == 0)
       {
-         // Add a prior on pose x0
+         // Add a prior on _pose x0
          static auto kPosePrior = gtsam::noiseModel::Diagonal::Sigmas(
                (gtsam::Vector(6) << gtsam::Vector3::Constant(0.1), gtsam::Vector3::Constant(0.3))
                      .finished());
          graph.addPrior(gtsam::Symbol('x', 0), poses[0], kPosePrior);
-//         printf("px0, x0\n");
 
          // Add a prior on landmark l0
          static auto kPointPrior = gtsam::noiseModel::Isotropic::Sigma(3, 0.1);
          graph.addPrior(gtsam::Symbol('l', 0), points[0], kPointPrior);
-//         printf("pl0, l0\n");
 
          // Add initial guesses to all observed landmarks
          for (size_t j = 0; j < points.size(); ++j)
             initial.insert(gtsam::Symbol('l', j), points[j]);
       } else
       {
-         printf("Optimizing Now.\n");
 //         graph.print("Bundle Adjustment Factor Graph");
 //         initial.print("Bundle Adjustment Initial Values");
 
@@ -253,9 +242,9 @@ void FactorGraphHandler::ComputeNonLinear(std::vector<gtsam::Point2>& measuremen
 
          gtsam::Values result = gtsam::LevenbergMarquardtOptimizer(graph, initial).optimize();
 
-         std::cout << "****************************************************" << std::endl;
-         std::cout << "Frame " << i << ": " << std::endl;
-         result.print("Current estimate: ");
+//         std::cout << "****************************************************" << std::endl;
+//         std::cout << "Frame " << i << ": " << std::endl;
+//         result.print("Current estimate: ");
 
          // Clear the factor graph and values for the next iteration
          graph.resize(0);

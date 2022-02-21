@@ -16,8 +16,8 @@ class CameraParams
       CameraParams(float fx, float fy, float cx, float cy);
       const Eigen::Vector2f& Project(const Eigen::Vector3f& point);
 
-      const Eigen::Matrix4f& GetExtrinsicMatrix();
-      const Eigen::Matrix3f& GetIntrinsicMatrix();
+      const Eigen::Matrix4f& GetExtrinsicMatrix() const {return _transform;};
+      const Eigen::Matrix<float, 3, 4>& GetProjectionMatrix() const {return _cameraMatrix;};
 
       void SetParams(float fx, float fy, float cx, float cy)
       {
@@ -31,7 +31,7 @@ class CameraParams
 
    private:
 
-      Eigen::Matrix3f _cameraMatrix;
+      Eigen::Matrix<float, 3, 4> _cameraMatrix;
       Eigen::Matrix4f _transform;
 
 };

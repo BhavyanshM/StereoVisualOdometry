@@ -6,6 +6,9 @@ set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/modules/" ${CMAKE_MODULE_PATH})
 
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 set(GTSAM_ALLOW_DEPRECATED_SINCE_V42 OFF)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 #MATH(EXPR stack_size "2048000 * 1024 * 1024") # 16 Mb
@@ -41,6 +44,16 @@ set(VISUAL_ODOMETRY_LIB
 		src/VisualOdometry/BundleAdjustment.cpp
 		src/headers/BundleAdjustment.h)
 
+set(CLAY_INCLUDE_DIRS
+		"/usr/local/include/ClayEngine"
+		"/usr/local/include/ClayEngine/Vendor/"
+		"/usr/local/include/ClayEngine/Vendor/GLAD/include"
+		"/usr/local/include/ClayEngine/Vendor/glfw/include"
+		"/usr/local/include/ClayEngine/Vendor/glm"
+		"/usr/local/include/ClayEngine/Vendor/ImGui"
+		"/usr/local/include/ClayEngine/Vendor/ImGui/imgui"
+		"/usr/local/include/ClayEngine/Vendor/spdlog/include"
+		"/usr/local/include/ClayEngine/Vendor/stb_image/")
 
 set(GEOMTOOLS_SRC
 		src/Geometry/include/CameraParams.h
@@ -52,7 +65,9 @@ include_directories(
 		include
 		src/headers
 		src/Geometry/include
+		${CLAY_INCLUDE_DIRS}
 )
+
 
 #set_target_properties(Mapsense_Launcher_UI PROPERTIES LINK_FLAGS -Wl,-z, stack-size, 1000000000000)
 
@@ -80,10 +95,26 @@ if(VIS_ODOM)
 
 endif()
 
+set(VIS_ODOM_CLAY 1)
+if(VIS_ODOM_CLAY)
+	add_executable(Vis_Odom_Clay ${VISUAL_ODOMETRY_LIB}
+			src/headers/ApplicationLauncher.h
+			src/ApplicationLauncher.cpp
+			src/VisualOdometryClayLauncher.cpp
+			src/headers/VisualOdometryClayLauncher.h)
+	target_link_libraries(Vis_Odom_Clay
+			${OpenCV_LIBS}
+			Eigen3::Eigen
+			geom-tools gtsam
+			ClayEngine glad imgui glfw3 ${CMAKE_DL_LIBS}
+			/usr/lib/x86_64-linux-gnu/libOpenCL.so)
+
+endif()
+
 set(VIS_ODOM_TEST 1)
 if(VIS_ODOM_TEST)
 	add_executable(Vis_Odom_Test ${VISUAL_ODOMETRY_LIB}
-			test/Catch2Test_VisualOdometry.cpp)
+            test/Test_VisualOdometry.cpp)
 	target_link_libraries(Vis_Odom_Test
 			${OpenCV_LIBS}
 			Eigen3::Eigen

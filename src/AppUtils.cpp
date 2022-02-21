@@ -33,6 +33,12 @@ void AppUtils::getFileNames(string dirName, vector<string>& files, bool printLis
    }
 }
 
+long long AppUtils::GetSteadyClockTime()
+{
+   auto start_point = std::chrono::steady_clock::now();
+   return std::chrono::time_point_cast<std::chrono::microseconds>(start_point).time_since_epoch().count();
+}
+
 void AppUtils::appendToDebugOutput(cv::Mat disp)
 {
    if (disp.rows <= 0 || disp.cols <= 0)

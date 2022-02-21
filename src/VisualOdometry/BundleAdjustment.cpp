@@ -97,18 +97,18 @@ using namespace gtsam;
 //               measurement, measurementNoise, Symbol('x', i), Symbol('l', j), K);
 //      }
 //
-//      // Add an initial guess for the current pose
+//      // Add an initial guess for the current _pose
 //      // Intentionally initialize the variables off from the ground truth
 //      static Pose3 kDeltaPose(Rot3::Rodrigues(-0.1, 0.2, 0.25),
 //                              Point3(0.05, -0.10, 0.20));
 //      initial.insert(Symbol('x', i), poses[i] * kDeltaPose);
 //
-//      // If this is the first iteration, add a prior on the first pose to set the
+//      // If this is the first iteration, add a prior on the first _pose to set the
 //      // coordinate frame and a prior on the first landmark to set the scale Also,
 //      // as iSAM solves incrementally, we must wait until each is observed at
 //      // least twice before adding it to iSAM.
 //      if (i == 0) {
-//         // Add a prior on pose x0, 30cm std on x,y,z and 0.1 rad on roll,pitch,yaw
+//         // Add a prior on _pose x0, 30cm std on x,y,z and 0.1 rad on roll,pitch,yaw
 //         static auto kPosePrior = noiseModel::Diagonal::Sigmas(
 //               (Vector(6) << Vector3::Constant(0.1), Vector3::Constant(0.3))
 //                     .finished());
@@ -189,9 +189,9 @@ BundleAdjustment::BundleAdjustment(CameraParams& params)
 //      measurements.emplace_back(gtsam::Point2(landmark.GetMeasurements2D()[1].cast<double>()));
 //      points.emplace_back(gtsam::Point3(landmark.GetPoint3D().cast<double>()));
 //   }
-//   for(auto pose : eigenPoses)
+//   for(auto _pose : eigenPoses)
 //   {
-//      poses.emplace_back(gtsam::Pose3(pose.cast<double>()));
+//      poses.emplace_back(gtsam::Pose3(_pose.cast<double>()));
 //   }
 //
 //   ComputeNonLinear(measurements, poses, points);
@@ -210,15 +210,15 @@ BundleAdjustment::BundleAdjustment(CameraParams& params)
 //         graph.push_back(GenericProjectionFactor<Pose3, gtsam::Point3, Cal3_S2>(measurements[j*2+i], cameraMeasurementNoise, Symbol('x', i), Symbol('l', j), K));
 //      }
 //
-//      // Add an initial guess for the current pose
+//      // Add an initial guess for the current _pose
 //      initial.insert(Symbol('x', i), poses[i]);
 //
-//      // If this is the first iteration, add a prior on the first pose to set the coordinate frame
+//      // If this is the first iteration, add a prior on the first _pose to set the coordinate frame
 //      // and a prior on the first landmark to set the scale
 //      // Also, as iSAM solves incrementally, we must wait until each is observed at least twice before
 //      // adding it to iSAM.
 //      if( i == 0) {
-//         // Add a prior on pose x0
+//         // Add a prior on _pose x0
 //         gtsam::Vector6 sigma;
 //         sigma << 0.3, 0.3, 0.3, 0.1, 0.1, 0.1;
 //
@@ -307,18 +307,18 @@ void BundleAdjustment::Optimize()
 //               measurement, measurementNoise, gtsam::Symbol('x', i), gtsam::Symbol('l', j), K);
 //      }
 //
-//      // Add an initial guess for the current pose
+//      // Add an initial guess for the current _pose
 //      // Intentionally initialize the variables off from the ground truth
 //      static gtsam::Pose3 kDeltaPose(gtsam::Rot3::Rodrigues(-0.1, 0.2, 0.25),
 //                                     gtsam::Point3(0.05, -0.10, 0.20));
 //      initial.insert(gtsam::Symbol('x', i), poses[i] * kDeltaPose);
 //
-//      // If this is the first iteration, add a prior on the first pose to set the
+//      // If this is the first iteration, add a prior on the first _pose to set the
 //      // coordinate frame and a prior on the first landmark to set the scale Also,
 //      // as iSAM solves incrementally, we must wait until each is observed at
 //      // least twice before adding it to iSAM.
 //      if (i == 0) {
-//         // Add a prior on pose x0, 30cm std on x,y,z and 0.1 rad on roll,pitch,yaw
+//         // Add a prior on _pose x0, 30cm std on x,y,z and 0.1 rad on roll,pitch,yaw
 //         static auto kPosePrior = gtsam::noiseModel::Diagonal::Sigmas(
 //               (gtsam::Vector(6) << gtsam::Vector3::Constant(0.1), gtsam::Vector3::Constant(0.3))
 //                     .finished());

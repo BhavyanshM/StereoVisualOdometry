@@ -6,12 +6,8 @@
 #define MAP_SENSE_MAPSENSELAYER_H
 
 #include "Core/Application.h"
-#include "MapsenseHeaders.h"
 #include "ApplicationState.h"
-#include "ImGuiLayout.h"
 #include "AppUtils.h"
-#include "NetworkManager.h"
-#include "OpenCLManager.h"
 
 namespace Clay
 {
@@ -69,8 +65,6 @@ namespace Clay
 
    protected:
         AppUtils appUtils;
-        NetworkManager *_networkManager;
-        OpenCLManager *_openCLManager;
 
         std::vector<Ref<Model>> _models;
         std::vector<Ref<Model>> _poses;

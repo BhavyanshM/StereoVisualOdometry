@@ -26,7 +26,8 @@ int main(int argc, char **argv)
 
    printf("Params: %.2lf %.2lf %.2lf %.2lf\n", appState.KITTI_CAM_PARAMS._fx, appState.KITTI_CAM_PARAMS._cx, appState.KITTI_CAM_PARAMS._fy,
           appState.KITTI_CAM_PARAMS._cy);
-   VisualOdometry *vo = new VisualOdometry(argc, argv, appState, data);
+   FactorGraphHandler* fgh = new FactorGraphHandler();
+   VisualOdometry *vo = new VisualOdometry(argc, argv, appState, data, fgh);
 
    while (true)
    {

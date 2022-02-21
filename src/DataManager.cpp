@@ -14,8 +14,8 @@ DataManager::DataManager(ApplicationState& appState)
    _baseline =0.54;
 
    /* KITTI Images */
-   AppUtils::getFileNames(_directory, _fileNames, true);
-  if(_secondDirectory != "") AppUtils::getFileNames(_secondDirectory, _secondFileNames, true);
+   AppUtils::getFileNames(_directory, _fileNames, false);
+  if(_secondDirectory != "") AppUtils::getFileNames(_secondDirectory, _secondFileNames, false);
 
         /* Ground Truth Poses*/
 //        if(poseFile != "")
@@ -58,6 +58,19 @@ cv::Mat DataManager::GetNextSecondImage()
    return cv::imread(_secondDirectory + _secondFileNames[_secondCounter++], cv::IMREAD_COLOR);
 }
 
+cv::Mat DataManager::GetImageByIndex(uint32_t index)
+{
+   std::cout << "Loading Image: " << (_directory + _fileNames[index]) << std::endl;
+   if(index >= _fileNames.size() - 1) index = 0;
+   return cv::imread(_directory + _fileNames[index], cv::IMREAD_COLOR);
+}
+
+cv::Mat DataManager::GetSecondImageByIndex(uint32_t index)
+{
+   std::cout << "Loading Image: " << (_secondDirectory + _secondFileNames[index]) << std::endl;
+   if(index >= _secondFileNames.size() - 1) index = 0;
+   return cv::imread(_secondDirectory + _secondFileNames[index], cv::IMREAD_COLOR);
+}
 
 
 cv::Mat DataManager::ReadImage(std::string filename)

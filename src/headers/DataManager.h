@@ -13,8 +13,13 @@
 class DataManager
 {
    public:
-      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+      DataManager() = default;
+
       DataManager(ApplicationState& appState);
+
+      cv::Mat GetImageByIndex(uint32_t index);
+
+      cv::Mat GetSecondImageByIndex(uint32_t index);
 
       void get_sample_depth(cv::Mat depth, float mean, float stddev);
 

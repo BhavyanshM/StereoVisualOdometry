@@ -45,6 +45,8 @@ class AppUtils
 
       static void DisplayImage(cv::Mat disp, const ApplicationState& app);
 
+      static long long GetSteadyClockTime();
+
 };
 
 #endif //APPUTILS_H
